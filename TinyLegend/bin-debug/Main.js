@@ -201,45 +201,105 @@ var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
         var _this = _super.call(this) || this;
+        _this.shape = new egret.Shape();
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
         return _this;
     }
     Main.prototype.onAddToStage = function (event) {
-        console.log(111);
-        //添加显示文本
-        this.drawText();
-        //绘制一个透明度为1的绿色矩形，宽高为100*80
-        var spr1 = new egret.Sprite();
-        spr1.graphics.beginFill(0x00ff00, 1);
-        spr1.graphics.drawRect(0, 0, 100, 80);
-        spr1.graphics.endFill();
-        spr1.width = 100;
-        spr1.height = 80;
-        this.addChild(spr1);
-        //设置显示对象可以相应触摸事件
-        spr1.touchEnabled = true;
-        //注册事件
-        spr1.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouch, this);
-        this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouchTap, this);
-        this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouchTaps, this, true);
+        // 父容器冒泡，先注释一下
+        // this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouchTap, this);
+        // this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTouchTaps, this, true);
+        var shape = this.shape;
+        shape.touchEnabled = true;
+        this.addChild(shape);
+        var mapConf = {
+            mapDetail: [
+                {
+                    index: 1,
+                    color: 0x9f4f00,
+                },
+                {
+                    index: 12,
+                    color: 0x00699f
+                }
+            ]
+        };
+        this.drawMap(mapConf);
+        shape.addEventListener(egret.TouchEvent.TOUCH_BEGIN, onMapTouchBegin, this);
+        shape.addEventListener(egret.TouchEvent.TOUCH_END, onMapTouchEnd, this);
+        var _touchState = false;
+        var _distance = new egret.Point();
+        // 记录当触摸地图时的xy坐标，以判断是移动动作还是点击动作
+        var startX = 0;
+        var startY = 0;
+        var startTime = 0;
+        function onMapTouchBegin(evt) {
+            _touchState = true;
+            _distance.x = evt.stageX - shape.x;
+            _distance.y = evt.stageY - shape.y;
+            startX = evt.stageX;
+            startY = evt.stageY;
+            startTime = egret.getTimer();
+            shape.addEventListener(egret.TouchEvent.TOUCH_MOVE, onMapTouchMove, this);
+        }
+        function onMapTouchMove(evt) {
+            if (egret.getTimer() - startTime >= 0) {
+                if (_touchState) {
+                    shape.x = evt.stageX - _distance.x;
+                    shape.y = evt.stageY - _distance.y;
+                }
+            }
+        }
+        function onMapTouchEnd(evt) {
+            _touchState = false;
+            // 如果满足移动距离小且停留时间短的话，则判定此次操作是点击（tap）事件
+            console.log(egret.getTimer());
+            console.log(startTime);
+            if (egret.getTimer() - startTime < 300) {
+            }
+            shape.removeEventListener(egret.TouchEvent.TOUCH_MOVE, onMapTouchMove, this);
+        }
     };
     Main.prototype.onTouch = function (evt) {
-        this.txt.text += "\n点击了spr1";
+        console.log(evt);
     };
     Main.prototype.onTouchTap = function (evt) {
-        this.txt.text += "\n容器冒泡侦听\n---------";
     };
     Main.prototype.onTouchTaps = function (evt) {
-        this.txt.text += "\n容器捕获侦听";
     };
-    Main.prototype.drawText = function () {
-        this.txt = new egret.TextField();
-        this.txt.size = 12;
-        this.txt.x = 250;
-        this.txt.width = 200;
-        this.txt.height = 200;
-        this.txt.text = "事件文字";
-        this.addChild(this.txt);
+    Main.prototype.drawMap = function (mapConf) {
+        var shape = this.shape;
+        var gapWidth = 5;
+        var mapX = 20;
+        var mapY = 40;
+        mapX = mapY = 0;
+        var mapWidth, mapHeight;
+        var blockWidth = 35;
+        mapWidth = mapHeight = 400;
+        var mapDetail = mapConf.mapDetail;
+        var color = 0xffffff;
+        shape.graphics.beginFill(color);
+        shape.graphics.drawRect(mapX, mapY, mapWidth, mapHeight);
+        shape.graphics.endFill();
+        for (var j in mapConf.mapDetail) {
+            console.log(mapConf.mapDetail[j]);
+            shape.graphics.beginFill(mapConf.mapDetail[j].color);
+            shape.graphics.drawRect((mapConf.mapDetail[j].index % 10) * (blockWidth + gapWidth), (Math.floor(mapConf.mapDetail[j].index / 10)) * (blockWidth + gapWidth), blockWidth, blockWidth);
+            shape.graphics.endFill();
+        }
+        for (var i = 0; i < 10; i++) {
+            shape.graphics.lineStyle(gapWidth, 0x008fd9);
+            shape.graphics.moveTo(0, i * (blockWidth + gapWidth));
+            shape.graphics.lineTo(mapWidth, i * (blockWidth + gapWidth));
+            shape.graphics.moveTo(i * (blockWidth + gapWidth), 0);
+            shape.graphics.lineTo(i * (blockWidth + gapWidth), mapHeight);
+        }
+        // for (var j in mapConf.mapDetail) {
+        //     console.log(mapConf.mapDetail[j]);
+        //     shape.graphics.beginFill(mapConf.mapDetail[j].color);
+        //     shape.graphics.drawRect((mapConf.mapDetail[j].index%10)*(blockWidth+gapWidth), (Math.floor(mapConf.mapDetail[j].index/10))*(blockWidth+gapWidth), blockWidth, blockWidth);
+        //     shape.graphics.endFill();
+        // }
     };
     return Main;
 }(egret.DisplayObjectContainer));
