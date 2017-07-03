@@ -281,12 +281,6 @@ var Main = (function (_super) {
         shape.graphics.beginFill(color);
         shape.graphics.drawRect(mapX, mapY, mapWidth, mapHeight);
         shape.graphics.endFill();
-        for (var j in mapConf.mapDetail) {
-            console.log(mapConf.mapDetail[j]);
-            shape.graphics.beginFill(mapConf.mapDetail[j].color);
-            shape.graphics.drawRect((mapConf.mapDetail[j].index % 10) * (blockWidth + gapWidth), (Math.floor(mapConf.mapDetail[j].index / 10)) * (blockWidth + gapWidth), blockWidth, blockWidth);
-            shape.graphics.endFill();
-        }
         for (var i = 0; i < 10; i++) {
             shape.graphics.lineStyle(gapWidth, 0x008fd9);
             shape.graphics.moveTo(0, i * (blockWidth + gapWidth));
@@ -294,12 +288,11 @@ var Main = (function (_super) {
             shape.graphics.moveTo(i * (blockWidth + gapWidth), 0);
             shape.graphics.lineTo(i * (blockWidth + gapWidth), mapHeight);
         }
-        // for (var j in mapConf.mapDetail) {
-        //     console.log(mapConf.mapDetail[j]);
-        //     shape.graphics.beginFill(mapConf.mapDetail[j].color);
-        //     shape.graphics.drawRect((mapConf.mapDetail[j].index%10)*(blockWidth+gapWidth), (Math.floor(mapConf.mapDetail[j].index/10))*(blockWidth+gapWidth), blockWidth, blockWidth);
-        //     shape.graphics.endFill();
-        // }
+        for (var j in mapConf.mapDetail) {
+            shape.graphics.beginFill(mapConf.mapDetail[j].color);
+            shape.graphics.drawRect((mapConf.mapDetail[j].index % 10) * (blockWidth + gapWidth), (Math.floor(mapConf.mapDetail[j].index / 10)) * (blockWidth + gapWidth), blockWidth, blockWidth);
+            shape.graphics.endFill();
+        }
     };
     return Main;
 }(egret.DisplayObjectContainer));

@@ -319,13 +319,6 @@ class Main extends egret.DisplayObjectContainer
         shape.graphics.drawRect(mapX, mapY, mapWidth, mapHeight);
         shape.graphics.endFill();
 
-        for (var j in mapConf.mapDetail) {
-            console.log(mapConf.mapDetail[j]);
-            shape.graphics.beginFill(mapConf.mapDetail[j].color);
-            shape.graphics.drawRect((mapConf.mapDetail[j].index%10)*(blockWidth+gapWidth), (Math.floor(mapConf.mapDetail[j].index/10))*(blockWidth+gapWidth), blockWidth, blockWidth);
-            shape.graphics.endFill();
-        }
-
         for (var i = 0; i < 10; i++) {
             shape.graphics.lineStyle(gapWidth, 0x008fd9);
             shape.graphics.moveTo(0, i*(blockWidth+gapWidth));
@@ -334,12 +327,10 @@ class Main extends egret.DisplayObjectContainer
             shape.graphics.lineTo(i*(blockWidth+gapWidth), mapHeight);
         }
 
-        // for (var j in mapConf.mapDetail) {
-        //     console.log(mapConf.mapDetail[j]);
-        //     shape.graphics.beginFill(mapConf.mapDetail[j].color);
-        //     shape.graphics.drawRect((mapConf.mapDetail[j].index%10)*(blockWidth+gapWidth), (Math.floor(mapConf.mapDetail[j].index/10))*(blockWidth+gapWidth), blockWidth, blockWidth);
-        //     shape.graphics.endFill();
-        // }
-
+        for (var j in mapConf.mapDetail) {
+            shape.graphics.beginFill(mapConf.mapDetail[j].color);
+            shape.graphics.drawRect((mapConf.mapDetail[j].index%10)*(blockWidth+gapWidth), (Math.floor(mapConf.mapDetail[j].index/10))*(blockWidth+gapWidth), blockWidth, blockWidth);
+            shape.graphics.endFill();
+        }
     }
 }
